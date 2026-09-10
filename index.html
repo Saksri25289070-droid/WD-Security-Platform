@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WD Security Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+:root{
+  --bg:#EFF4F8;
+  --bg2:#E8EEF7;
+  --card:#FFFFFF;
+  --card-hi:#F5F8FC;
+  --border:#D8E2EE;
+  --border-hi:#B8CAFE;
+  --fg:#0F172A;
+  --muted:#475569;
+  --dim:#94A3B8;
+  --blue:#2266FF;
+  --blue-light:#3B82F6;
+  --teal:#0D9488;
+  --teal-light:#00E5D1;
+  --green:#16A34A;
+  --amber:#B45309;
+  --amber-bg:#FFF7E6;
+  --amber-border:#FDE68A;
+  --red:#DC2626;
+  --red-bg:#FEF2F2;
+  --red-border:#FECACA;
+  --grad-h:linear-gradient(90deg,#2266FF 0%,#00C4B4 100%);
+  --grad-amber:linear-gradient(90deg,#F59E0B 0%,#FBBF24 100%);
+  --shadow-sm:0 1px 3px rgba(15,23,42,.07),0 1px 2px rgba(15,23,42,.05);
+  --shadow-md:0 4px 16px rgba(15,23,42,.08),0 2px 6px rgba(15,23,42,.05);
+  --shadow-lg:0 12px 40px rgba(15,23,42,.1),0 4px 12px rgba(15,23,42,.06);
+}
+body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--fg);min-height:100vh;overflow-x:hidden;}
+::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-thumb{background:rgba(34,102,255,.25);border-radius:2px;}
+
+/* BG PATTERN */
+.bg-pattern{position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(rgba(34,102,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(34,102,255,.035) 1px,transparent 1px);
+  background-size:48px 48px;
+  mask-image:radial-gradient(ellipse 80% 60% at 50% 30%,black 10%,transparent 100%);}
+.bg-glow{position:fixed;inset:0;pointer-events:none;z-index:0;}
+.bg-glow::before{content:'';position:absolute;width:700px;height:400px;
+  background:radial-gradient(ellipse,rgba(34,102,255,.06) 0%,rgba(0,196,180,.03) 55%,transparent 100%);
+  top:0;left:50%;transform:translateX(-50%);}
+
+/* HEADER */
+header{position:relative;z-index:10;padding:28px 48px 0;max-width:1200px;margin:0 auto;}
+.header-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;}
+.brand{display:flex;align-items:center;gap:14px;}
+.brand-icon{width:50px;height:50px;border-radius:14px;background:var(--grad-h);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(34,102,255,.3);flex-shrink:0;}
+.brand-title{font-size:20px;font-weight:800;color:var(--fg);letter-spacing:-.3px;}
+.brand-sub{font-size:12px;color:var(--muted);margin-top:1px;}
+.header-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+
+/* STATUS BADGES */
+.header-badge{display:inline-flex;align-items:center;gap:7px;padding:6px 14px;border-radius:20px;background:#ECFDF5;border:1px solid #A7F3D0;color:#065F46;font-size:11px;font-weight:700;letter-spacing:.3px;}
+.live-dot{width:6px;height:6px;border-radius:50%;background:#10B981;animation:pulse-g 2s infinite;}
+@keyframes pulse-g{0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,.4);}70%{box-shadow:0 0 0 6px rgba(16,185,129,0);}}
+.db-status{display:inline-flex;align-items:center;gap:7px;padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;transition:all .3s;}
+.db-status.connecting{background:#FFF7E6;border:1px solid #FDE68A;color:#92400E;}
+.db-status.connected{background:#EFF6FF;border:1px solid #BFDBFE;color:#1E40AF;}
+.db-status.error{background:#FEF2F2;border:1px solid #FECACA;color:#991B1B;}
+.db-dot{width:6px;height:6px;border-radius:50%;background:currentColor;}
+.db-dot.pulse{animation:pulse-g 2s infinite;}
+
+.manage-btn{display:inline-flex;align-items:center;gap:7px;padding:8px 18px;border-radius:20px;background:#EFF6FF;border:1px solid #BFDBFE;color:#1D4ED8;font-size:11px;font-weight:700;cursor:pointer;transition:all .22s;font-family:'Sarabun',sans-serif;}
+.manage-btn:hover{background:#DBEAFE;border-color:#93C5FD;box-shadow:var(--shadow-sm);}
+
+/* HERO */
+.hero{position:relative;z-index:10;padding:44px 48px 32px;max-width:1200px;margin:0 auto;text-align:center;}
+.hero-eyebrow{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--blue-light);margin-bottom:14px;opacity:.8;}
+.hero-title{font-size:clamp(32px,4.5vw,50px);font-weight:900;letter-spacing:-1.6px;line-height:1.05;margin-bottom:14px;color:var(--fg);}
+.gt{background:var(--grad-h);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-desc{font-size:15px;color:var(--muted);max-width:520px;margin:0 auto;line-height:1.75;}
+
+.divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:32px 0;}
+.main{position:relative;z-index:10;padding:0 48px 72px;max-width:1200px;margin:0 auto;}
+
+/* SECTION */
+.section-wrap{margin-bottom:20px;}
+.section-label{font-size:10px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:var(--blue-light);display:flex;align-items:center;gap:12px;margin-bottom:4px;}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border);}
+.section-sublabel{font-size:13px;font-weight:500;color:var(--muted);padding-left:2px;}
+
+/* APP GRID & CARD */
+.app-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:18px;margin-bottom:40px;}
+.app-card{background:var(--card);border:1px solid var(--border);border-radius:20px;overflow:hidden;transition:all .25s cubic-bezier(.4,0,.2,1);position:relative;display:flex;flex-direction:column;box-shadow:var(--shadow-sm);}
+.app-card:hover{border-color:var(--border-hi);transform:translateY(-4px);box-shadow:var(--shadow-lg);}
+.app-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2.5px;background:var(--grad-h);opacity:0;transition:opacity .28s;}
+.app-card:hover::before{opacity:1;}
+
+/* AMBER CARD */
+.app-card.amber-card{border-color:var(--amber-border);}
+.app-card.amber-card:hover{border-color:#FCD34D;box-shadow:0 12px 40px rgba(245,158,11,.12),0 4px 12px rgba(245,158,11,.08);}
+.app-card.amber-card::before{background:var(--grad-amber);}
+
+/* RED CARD */
+.app-card.red-card{border-color:var(--red-border);}
+.app-card.red-card:hover{border-color:#FCA5A5;box-shadow:0 12px 40px rgba(220,38,38,.1),0 4px 12px rgba(220,38,38,.07);}
+.app-card.red-card::before{background:linear-gradient(90deg,#EF4444,#F87171);}
+
+.app-card-head{padding:26px 26px 16px;display:flex;gap:18px;align-items:flex-start;}
+.app-card-icon{width:54px;height:54px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.app-card-icon.blue{background:linear-gradient(135deg,rgba(34,102,255,.12),rgba(34,102,255,.06));border:1px solid rgba(34,102,255,.2);}
+.app-card-icon.teal-c{background:linear-gradient(135deg,rgba(13,148,136,.12),rgba(13,148,136,.06));border:1px solid rgba(13,148,136,.2);}
+.app-card-icon.amber{background:linear-gradient(135deg,rgba(245,158,11,.12),rgba(245,158,11,.06));border:1px solid rgba(245,158,11,.2);}
+.app-card-icon.red{background:linear-gradient(135deg,rgba(220,38,38,.1),rgba(220,38,38,.05));border:1px solid rgba(220,38,38,.18);}
+.app-card-meta{flex:1;}
+.app-card-project{font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--blue-light);margin-bottom:6px;}
+.app-card-project.amber{color:var(--amber);}
+.app-card-project.red{color:var(--red);}
+.status-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:9px;font-weight:700;margin-bottom:8px;letter-spacing:.3px;}
+.status-live{background:#ECFDF5;border:1px solid #A7F3D0;color:#065F46;}
+.status-dot{width:5px;height:5px;border-radius:50%;background:currentColor;animation:pulse-g 2s infinite;}
+.app-card-title{font-size:17px;font-weight:800;color:var(--fg);letter-spacing:-.3px;line-height:1.2;}
+.app-card-body{padding:0 26px 20px;flex:1;}
+.app-card-desc{font-size:13px;color:var(--muted);line-height:1.75;border-left:2px solid var(--border-hi);padding-left:12px;margin-top:2px;}
+.app-card-desc.amber{border-left-color:#FCD34D;}
+.app-card-desc.red{border-left-color:#FCA5A5;}
+
+/* CARD LINKS */
+.app-card-links{border-top:1px solid var(--border);padding:16px 18px;display:flex;gap:10px;flex-wrap:wrap;background:var(--bg);}
+.app-card-links.amber-border{border-top-color:var(--amber-border);background:var(--amber-bg);}
+.app-card-links.red-border{border-top-color:var(--red-border);background:var(--red-bg);}
+.app-link-btn{flex:1;min-width:120px;display:flex;align-items:center;justify-content:center;gap:7px;padding:11px 16px;border-radius:10px;font-size:13px;font-weight:700;font-family:'Sarabun',sans-serif;cursor:pointer;text-decoration:none;transition:all .22s;border:none;}
+.app-link-btn.primary{background:var(--grad-h);color:#fff;box-shadow:0 3px 12px rgba(34,102,255,.3);}
+.app-link-btn.primary:hover{opacity:.9;transform:translateY(-2px);box-shadow:0 6px 20px rgba(34,102,255,.38);}
+.app-link-btn.secondary{background:#F0FDF4;color:#15803D;border:1px solid #BBF7D0;}
+.app-link-btn.secondary:hover{background:#DCFCE7;transform:translateY(-2px);}
+
+.expand-toggle-btn{flex:1;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px 16px;border-radius:10px;font-size:13px;font-weight:700;font-family:'Sarabun',sans-serif;cursor:pointer;background:none;border:none;transition:all .22s;}
+.expand-toggle-btn.amber{background:var(--amber-bg);color:#92400E;border:1px solid var(--amber-border);}
+.expand-toggle-btn.amber:hover{background:#FEF3C7;}
+.expand-toggle-btn.red{background:var(--red-bg);color:#991B1B;border:1px solid var(--red-border);}
+.expand-toggle-btn.red:hover{background:#FEE2E2;}
+.expand-toggle-btn .btn-left{display:flex;align-items:center;gap:8px;}
+.expand-chevron-icon{transition:transform .3s;flex-shrink:0;}
+.app-card.open .expand-chevron-icon{transform:rotate(180deg);}
+
+/* EXPAND PANEL */
+.expand-panel{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.4,0,.2,1);}
+.app-card.open .expand-panel{max-height:800px;}
+.expand-panel-inner{padding:6px 18px 18px;}
+.panel-sep{height:1px;margin-bottom:14px;}
+.amber-sep{background:linear-gradient(90deg,var(--amber-border),transparent);}
+.red-sep{background:linear-gradient(90deg,var(--red-border),transparent);}
+
+/* SKELETON */
+.skeleton{background:linear-gradient(90deg,#E2E8F0 25%,#EEF2FF 50%,#E2E8F0 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:10px;height:52px;margin-bottom:8px;}
+@keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+
+/* LINK ITEMS */
+.link-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;text-decoration:none;margin-bottom:8px;transition:all .2s;position:relative;}
+.link-item.amber{background:#FFFBEB;border:1px solid var(--amber-border);}
+.link-item.amber:hover{background:#FEF3C7;border-color:#F59E0B;transform:translateX(4px);}
+.link-item.red{background:#FFF5F5;border:1px solid var(--red-border);}
+.link-item.red:hover{background:#FEE2E2;border-color:#F87171;transform:translateX(4px);}
+.link-icon-wrap{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.link-icon-wrap.amber{background:#FEF3C7;}
+.link-icon-wrap.red{background:#FEE2E2;}
+.link-item-body{flex:1;min-width:0;}
+.link-item-name{font-size:13px;font-weight:700;color:var(--fg);margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.link-item-desc{font-size:11px;color:var(--muted);line-height:1.4;}
+.link-item-actions{display:flex;align-items:center;gap:5px;flex-shrink:0;}
+.link-item-arrow{opacity:.4;transition:opacity .2s;cursor:pointer;}
+.link-item:hover .link-item-arrow{opacity:.8;}
+.icon-btn{width:26px;height:26px;border-radius:7px;border:none;background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:all .18s;flex-shrink:0;}
+.link-item:hover .icon-btn{opacity:1;}
+.icon-btn.edit-btn{background:#EFF6FF;border:1px solid #BFDBFE;}
+.icon-btn.edit-btn:hover{background:#DBEAFE;}
+.icon-btn.del-btn{background:#FEF2F2;border:1px solid #FECACA;}
+.icon-btn.del-btn:hover{background:#FEE2E2;}
+
+.empty-state{text-align:center;padding:22px 16px;border:1.5px dashed var(--amber-border);border-radius:12px;margin-bottom:8px;background:#FFFBEB;}
+.empty-state.red-empty{border-color:var(--red-border);background:#FFF5F5;}
+.empty-state-text{font-size:12px;color:var(--muted);margin-top:8px;}
+
+.add-link-row{display:flex;justify-content:center;margin-top:4px;}
+.add-link-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 18px;border-radius:10px;font-size:12px;font-weight:700;font-family:'Sarabun',sans-serif;cursor:pointer;border:none;transition:all .22s;}
+.add-link-btn.amber{background:#FEF3C7;color:#92400E;border:1px solid var(--amber-border);}
+.add-link-btn.amber:hover{background:#FDE68A;}
+.add-link-btn.red{background:#FEE2E2;color:#991B1B;border:1px solid var(--red-border);}
+.add-link-btn.red:hover{background:#FECACA;}
+
+.app-card-single-link{margin:0 18px 18px;display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#EFF6FF;border:1px solid #BFDBFE;border-radius:10px;text-decoration:none;transition:all .22s;}
+.app-card-single-link:hover{background:#DBEAFE;border-color:#93C5FD;transform:translateY(-2px);}
+.app-card-single-link span{font-size:13px;font-weight:700;color:#1D4ED8;}
+
+/* STATS */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:36px;}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px;text-align:center;position:relative;overflow:hidden;box-shadow:var(--shadow-sm);transition:all .22s;}
+.stat-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px);}
+.stat-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--grad-h);border-radius:0 2px 2px 0;}
+.stat-num{font-size:34px;font-weight:900;line-height:1;margin-bottom:6px;}
+.stat-lbl{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
+
+footer{position:relative;z-index:10;padding:22px 48px;border-top:1px solid var(--border);text-align:center;font-size:11px;color:var(--dim);max-width:1200px;margin:0 auto;}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,.4);backdrop-filter:blur(6px);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .25s;}
+.modal-overlay.show{opacity:1;pointer-events:all;}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:22px;width:100%;max-width:480px;overflow:hidden;transform:translateY(18px) scale(.97);transition:transform .3s cubic-bezier(.4,0,.2,1);box-shadow:0 32px 80px rgba(15,23,42,.18);}
+.modal-overlay.show .modal{transform:translateY(0) scale(1);}
+.modal-header{padding:24px 26px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);}
+.modal-title-wrap{display:flex;align-items:center;gap:12px;}
+.modal-icon{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;}
+.modal-icon.amber{background:#FEF3C7;border:1px solid var(--amber-border);}
+.modal-icon.red{background:#FEE2E2;border:1px solid var(--red-border);}
+.modal-icon.blue{background:#EFF6FF;border:1px solid #BFDBFE;}
+.modal-title{font-size:16px;font-weight:800;color:var(--fg);}
+.modal-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+.modal-close{width:32px;height:32px;border-radius:8px;background:var(--bg);border:1px solid var(--border);color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .18s;font-family:'Sarabun',sans-serif;}
+.modal-close:hover{background:#FEE2E2;border-color:#FECACA;color:#DC2626;}
+.modal-body{padding:22px 26px 26px;}
+.form-group{margin-bottom:16px;}
+.form-label{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:7px;display:block;}
+.form-input{width:100%;padding:12px 14px;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;color:var(--fg);font-size:14px;font-family:'Sarabun',sans-serif;outline:none;transition:border-color .2s,box-shadow .2s;}
+.form-input:focus{border-color:#93C5FD;box-shadow:0 0 0 3px rgba(59,130,246,.1);}
+.form-input.amber:focus{border-color:#FCD34D;box-shadow:0 0 0 3px rgba(245,158,11,.1);}
+.form-input.red-focus:focus{border-color:#FCA5A5;box-shadow:0 0 0 3px rgba(220,38,38,.08);}
+.form-input::placeholder{color:var(--dim);}
+.form-hint{font-size:11px;color:var(--dim);margin-top:5px;}
+.modal-actions{display:flex;gap:10px;margin-top:22px;}
+.modal-btn{flex:1;padding:12px 18px;border-radius:10px;font-size:14px;font-weight:700;font-family:'Sarabun',sans-serif;cursor:pointer;transition:all .22s;border:none;display:flex;align-items:center;justify-content:center;gap:8px;}
+.modal-btn.cancel{background:var(--bg);color:var(--muted);border:1.5px solid var(--border);}
+.modal-btn.cancel:hover{background:#F1F5F9;}
+.modal-btn.save.amber{background:linear-gradient(90deg,#F59E0B,#FBBF24);color:#fff;box-shadow:0 3px 12px rgba(245,158,11,.3);}
+.modal-btn.save.amber:hover{opacity:.9;transform:translateY(-1px);}
+.modal-btn.save.red{background:linear-gradient(90deg,#EF4444,#F87171);color:#fff;box-shadow:0 3px 12px rgba(220,38,38,.25);}
+.modal-btn.save.red:hover{opacity:.9;transform:translateY(-1px);}
+.modal-btn:disabled{opacity:.5;cursor:not-allowed;transform:none !important;}
+
+.del-modal-body{padding:24px 26px 26px;text-align:center;}
+.del-modal-icon{width:54px;height:54px;border-radius:16px;background:#FEE2E2;border:1px solid #FECACA;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;}
+.del-modal-title{font-size:17px;font-weight:800;color:var(--fg);margin-bottom:8px;}
+.del-modal-name{font-size:13px;color:#92400E;font-weight:700;margin-bottom:6px;}
+.del-modal-name.red{color:#991B1B;}
+.del-modal-desc{font-size:13px;color:var(--muted);line-height:1.6;}
+.del-modal-actions{display:flex;gap:10px;margin-top:22px;}
+
+/* TOAST */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--card);border:1px solid #A7F3D0;border-radius:14px;padding:12px 22px;display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700;color:#065F46;z-index:2000;transition:transform .35s cubic-bezier(.4,0,.2,1),opacity .35s;opacity:0;white-space:nowrap;box-shadow:var(--shadow-md);}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+.toast.error{border-color:#FECACA;color:#991B1B;}
+
+.saving-ring{width:14px;height:14px;border:2px solid currentColor;border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;display:none;}
+.saving-ring.show{display:block;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media(max-width:768px){
+  header,footer{padding-left:20px;padding-right:20px;}
+  .hero{padding:32px 20px 20px;}
+  .main{padding:0 20px 52px;}
+  .app-grid{grid-template-columns:1fr;}
+  .stat-grid{grid-template-columns:1fr 1fr;}
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:none;}}
+header{animation:fadeUp .4s ease both;}
+.hero{animation:fadeUp .5s ease both .05s;}
+</style>
+</head>
+<body>
+<div class="bg-pattern"></div>
+<div class="bg-glow"></div>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <div class="brand">
+      <div class="brand-icon">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <div>
+        <div class="brand-title">WD Security Platform</div>
+        <div class="brand-sub">Western Digital · REO Security (PRB)</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="db-status connecting" id="dbStatus">
+        <div class="db-dot pulse"></div>
+        <span id="dbStatusText">กำลังเชื่อมต่อ...</span>
+      </div>
+      <button class="manage-btn" onclick="openManageModal()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+        จัดการ Links
+      </button>
+      <div class="header-badge"><div class="live-dot"></div>All Systems Live</div>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">Security Operations Center · SOC 614984</div>
+  <h1 class="hero-title">Security <span class="gt">Web Applications</span></h1>
+  <p class="hero-desc">ศูนย์รวมเครื่องมือระบบรักษาความปลอดภัย Western Digital Thailand — เลือกแอปพลิเคชันที่ต้องการได้เลย</p>
+</div>
+
+<div class="main">
+  <div class="divider"></div>
+
+  <!-- PROJECT 1 -->
+  <div class="section-wrap">
+    <div class="section-label">Project 1 · Building Access Control</div>
+    <div class="section-sublabel">Applications ควบคุมการเข้า - ออก ประตูอาคาร</div>
+  </div>
+  <div class="app-grid">
+    <div class="app-card">
+      <div class="app-card-head">
+        <div class="app-card-icon blue">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2266FF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div class="app-card-meta">
+          <div class="app-card-project">Building Access Control WebApp</div>
+          <div class="status-badge status-live"><div class="status-dot"></div>Live</div>
+          <div class="app-card-title">Access Control System</div>
+        </div>
+      </div>
+      <div class="app-card-body">
+        <div class="app-card-desc">ระบบควบคุมการเข้า-ออกพื้นที่ สำหรับ Admin จัดการพนักงาน Guard Users และดู Log การเข้าพื้นที่แบบ Realtime</div>
+      </div>
+      <div class="app-card-links">
+        <a href="https://skaewaudon-a11y.github.io/building-access-control/" target="_blank" class="app-link-btn primary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Admin Portal
+        </a>
+        <a href="https://skaewaudon-a11y.github.io/Guard-Terminal-V.01/" target="_blank" class="app-link-btn secondary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#15803D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          Guard Terminal
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROJECT 2 -->
+  <div class="section-wrap">
+    <div class="section-label">Project 2 · e-Learning</div>
+    <div class="section-sublabel">Applications อบรมกฎระเบียบเจ้าหน้าที่รักษาความปลอดภัย</div>
+  </div>
+  <div class="app-grid">
+    <div class="app-card">
+      <div class="app-card-head">
+        <div class="app-card-icon teal-c">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0D9488" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        </div>
+        <div class="app-card-meta">
+          <div class="app-card-project">Security Web App e-Learning</div>
+          <div class="status-badge status-live"><div class="status-dot"></div>Live</div>
+          <div class="app-card-title">e-Learning Portal V.02</div>
+        </div>
+      </div>
+      <div class="app-card-body">
+        <div class="app-card-desc">ระบบฝึกอบรมและเรียนรู้ด้านความปลอดภัยออนไลน์ สำหรับเจ้าหน้าที่ Western Digital พร้อม Step-by-Step และ Flow Diagram</div>
+      </div>
+      <a href="https://skaewaudon-a11y.github.io/Security-Web-App-e-Learning-V.02/" target="_blank" class="app-card-single-link">
+        <span>เปิด e-Learning Portal →</span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- PROJECT 3 -->
+  <div class="section-wrap">
+    <div class="section-label">Project 3 · Emergency Door Inspection</div>
+    <div class="section-sublabel">คลิกที่การ์ดเพื่อดู Link อุปกรณ์ตรวจสอบ และระบบ Admin ควบคุม</div>
+  </div>
+  <div class="app-grid">
+
+    <!-- USER CARD -->
+    <div class="app-card amber-card" id="userCard">
+      <div class="app-card-head">
+        <div class="app-card-icon amber">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <div class="app-card-meta">
+          <div class="app-card-project amber">User · Field Inspection</div>
+          <div class="status-badge status-live"><div class="status-dot"></div>Live</div>
+          <div class="app-card-title">Emergency Door Check</div>
+        </div>
+      </div>
+      <div class="app-card-body">
+        <div class="app-card-desc amber">Link อุปกรณ์ตรวจสอบประตูฉุกเฉินสำหรับเจ้าหน้าที่ภาคสนาม คลิกปุ่มด้านล่างเพื่อดูรายการ Web App</div>
+      </div>
+      <div class="app-card-links amber-border">
+        <button class="expand-toggle-btn amber" onclick="toggleCard('userCard')">
+          <span class="btn-left">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            User App Links
+          </span>
+          <svg class="expand-chevron-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+      </div>
+      <div class="expand-panel">
+        <div class="expand-panel-inner">
+          <div class="panel-sep amber-sep"></div>
+          <div id="userLinkList"><div class="skeleton"></div><div class="skeleton" style="opacity:.5"></div></div>
+          <div class="add-link-row">
+            <button class="add-link-btn amber" onclick="openAddModal('user')">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#92400E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              เพิ่ม Link
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADMIN CARD -->
+    <div class="app-card red-card" id="adminCard">
+      <div class="app-card-head">
+        <div class="app-card-icon red">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+        </div>
+        <div class="app-card-meta">
+          <div class="app-card-project red">Admin · Control Panel</div>
+          <div class="status-badge status-live"><div class="status-dot"></div>Live</div>
+          <div class="app-card-title">Emergency Inspection Admin</div>
+        </div>
+      </div>
+      <div class="app-card-body">
+        <div class="app-card-desc red">Web App ระบบ Admin สำหรับดูรายงาน จัดการข้อมูล และควบคุมการตรวจสอบประตูฉุกเฉินทุกจุด</div>
+      </div>
+      <div class="app-card-links red-border">
+        <button class="expand-toggle-btn red" onclick="toggleCard('adminCard')">
+          <span class="btn-left">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Admin App Links
+          </span>
+          <svg class="expand-chevron-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+      </div>
+      <div class="expand-panel">
+        <div class="expand-panel-inner">
+          <div class="panel-sep red-sep"></div>
+          <div id="adminLinkList"><div class="skeleton"></div><div class="skeleton" style="opacity:.5"></div></div>
+          <div class="add-link-row">
+            <button class="add-link-btn red" onclick="openAddModal('admin')">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#991B1B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              เพิ่ม Link
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section-wrap" style="margin-bottom:18px;">
+    <div class="section-label">Platform Overview</div>
+  </div>
+  <div class="stat-grid">
+    <div class="stat-card"><div class="stat-num" style="color:#2266FF;">3</div><div class="stat-lbl">Projects</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:#0D9488;">5</div><div class="stat-lbl">Web Apps</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:#16A34A;">5</div><div class="stat-lbl">All Live</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:#D97706;" id="totalLinks">—</div><div class="stat-lbl">Saved Links</div></div>
+  </div>
+</div>
+
+<footer>
+  <div>© 2026 WD Security Platform · Saksri Kaewaudon · Security Coordinator · REO Security (Mfg) · Western Digital Thailand</div>
+  <div style="margin-top:5px;">เชื่อมต่อ Cloud Storage · ข้อมูลบันทึกถาวร · wi-security-training-37921</div>
+</footer>
+
+<!-- ADD / EDIT MODAL -->
+<div class="modal-overlay" id="addModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title-wrap">
+        <div class="modal-icon amber" id="modalIcon"></div>
+        <div><div class="modal-title" id="modalTitle">เพิ่ม Link ใหม่</div><div class="modal-sub" id="modalSub"></div></div>
+      </div>
+      <button class="modal-close" onclick="closeModal('addModal')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">ชื่อ Link</label>
+        <input type="text" class="form-input" id="inputName" placeholder="เช่น Emergency Exit Zone A" maxlength="60">
+        <div class="form-hint">ชื่อที่แสดงในการ์ด (สูงสุด 60 ตัวอักษร)</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">คำอธิบาย</label>
+        <input type="text" class="form-input" id="inputDesc" placeholder="เช่น ตรวจสอบประตูฉุกเฉิน อาคาร A ชั้น 1-3" maxlength="80">
+      </div>
+      <div class="form-group">
+        <label class="form-label">URL</label>
+        <input type="url" class="form-input" id="inputUrl" placeholder="https://...">
+        <div class="form-hint">ต้องขึ้นต้นด้วย https://</div>
+      </div>
+      <div class="modal-actions">
+        <button class="modal-btn cancel" onclick="closeModal('addModal')">ยกเลิก</button>
+        <button class="modal-btn save amber" id="saveBtn" onclick="saveLink()">
+          <div class="saving-ring" id="saveRing"></div>
+          <span id="saveBtnText">บันทึก</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MANAGE MODAL -->
+<div class="modal-overlay" id="manageModal">
+  <div class="modal" style="max-width:560px;">
+    <div class="modal-header">
+      <div class="modal-title-wrap">
+        <div class="modal-icon blue">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+        </div>
+        <div><div class="modal-title">จัดการ Links ทั้งหมด</div><div class="modal-sub">Project 3 · Emergency Door Inspection</div></div>
+      </div>
+      <button class="modal-close" onclick="closeModal('manageModal')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" style="max-height:60vh;overflow-y:auto;">
+      <div style="margin-bottom:14px;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#92400E;margin-bottom:10px;display:flex;align-items:center;gap:8px;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          User Links
+          <button class="add-link-btn amber" style="margin-left:auto;padding:5px 12px;font-size:11px;" onclick="closeModal('manageModal');openAddModal('user');">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#92400E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>เพิ่ม
+          </button>
+        </div>
+        <div id="manageUserList"></div>
+      </div>
+      <div style="height:1px;background:var(--border);margin:14px 0;"></div>
+      <div>
+        <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#991B1B;margin-bottom:10px;display:flex;align-items:center;gap:8px;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Admin Links
+          <button class="add-link-btn red" style="margin-left:auto;padding:5px 12px;font-size:11px;" onclick="closeModal('manageModal');openAddModal('admin');">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#991B1B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>เพิ่ม
+          </button>
+        </div>
+        <div id="manageAdminList"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE MODAL -->
+<div class="modal-overlay" id="delModal">
+  <div class="modal" style="max-width:400px;">
+    <div class="del-modal-body">
+      <div class="del-modal-icon">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+      </div>
+      <div class="del-modal-title">ลบ Link นี้?</div>
+      <div class="del-modal-name" id="delModalName"></div>
+      <div class="del-modal-desc">ข้อมูลจะถูกลบออกจาก Cloud Storage ทันที และไม่สามารถกู้คืนได้</div>
+      <div class="del-modal-actions">
+        <button class="modal-btn cancel" onclick="closeModal('delModal')">ยกเลิก</button>
+        <button class="modal-btn save red" id="delConfirmBtn" onclick="confirmDelete()">
+          <div class="saving-ring" id="delRing"></div>
+          <span id="delBtnText">ลบ Link</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- FIREBASE -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot, query, orderBy, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAD-Eqk3scP-ocCmq0ya10ni_NDyR5IRlQ",
+  authDomain: "wi-security-training-37921.firebaseapp.com",
+  projectId: "wi-security-training-37921",
+  storageBucket: "wi-security-training-37921.firebasestorage.app",
+  messagingSenderId: "276017372166",
+  appId: "1:276017372166:web:ead3d604570f2cc9987787"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+function setDbStatus(state) {
+  const el = document.getElementById('dbStatus');
+  const txt = document.getElementById('dbStatusText');
+  const dot = el.querySelector('.db-dot');
+  el.className = 'db-status ' + state;
+  dot.className = 'db-dot' + (state === 'connecting' ? ' pulse' : '');
+  if (state === 'connected') txt.textContent = 'Cloud Storage';
+  else if (state === 'error') txt.textContent = 'เชื่อมต่อไม่ได้';
+  else txt.textContent = 'กำลังเชื่อมต่อ...';
+}
+
+function initListeners() {
+  ['user','admin'].forEach(type => {
+    const col = collection(db, 'securityPlatformLinks', type, 'links');
+    const q = query(col, orderBy('createdAt', 'asc'));
+    onSnapshot(q, snap => {
+      setDbStatus('connected');
+      const items = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      window._store[type] = items;
+      renderList(type);
+      renderManageList(type);
+      updateStats();
+    }, err => {
+      setDbStatus('error');
+      showToast('เชื่อมต่อ Cloud Storage ไม่สำเร็จ', true);
+    });
+  });
+}
+
+window._saveToFirestore = async function(type, data, editId) {
+  setSaving(true);
+  try {
+    if (editId) {
+      await updateDoc(doc(db, 'securityPlatformLinks', type, 'links', editId), { name: data.name, desc: data.desc, url: data.url });
+      showToast('แก้ไข Link สำเร็จ · บันทึกแล้ว');
+    } else {
+      await addDoc(collection(db, 'securityPlatformLinks', type, 'links'), { ...data, createdAt: serverTimestamp() });
+      showToast('เพิ่ม Link สำเร็จ · บันทึกแล้ว');
+    }
+    closeModal('addModal');
+  } catch(e) { showToast('บันทึกไม่สำเร็จ: ' + e.message, true); }
+  setSaving(false);
+};
+
+window._deleteFromFirestore = async function(type, id) {
+  setDeleting(true);
+  try {
+    await deleteDoc(doc(db, 'securityPlatformLinks', type, 'links', id));
+    closeModal('delModal');
+    showToast('ลบ Link เรียบร้อย');
+  } catch(e) { showToast('ลบไม่สำเร็จ: ' + e.message, true); }
+  setDeleting(false);
+};
+
+initListeners();
+</script>
+
+<script>
+window._store = { user: [], admin: [] };
+window._editMode = { active: false, type: null, id: null };
+window._deleteTarget = { type: null, id: null };
+
+function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function renderList(type) {
+  const el = document.getElementById(type === 'user' ? 'userLinkList' : 'adminLinkList');
+  const color = type === 'user' ? 'amber' : 'red';
+  const stroke = type === 'user' ? '#D97706' : '#DC2626';
+  const items = window._store[type];
+  if (!items.length) {
+    el.innerHTML = '<div class="empty-state' + (type==='admin'?' red-empty':'') + '"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="' + stroke + '" stroke-width="1.5" opacity=".4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg><div class="empty-state-text">ยังไม่มี Link — กดปุ่มเพิ่ม Link ด้านล่าง</div></div>';
+    return;
+  }
+  el.innerHTML = items.map(item => linkItemHTML(item, color, stroke, type)).join('');
+}
+
+function renderManageList(type) {
+  const el = document.getElementById(type === 'user' ? 'manageUserList' : 'manageAdminList');
+  const color = type === 'user' ? 'amber' : 'red';
+  const stroke = type === 'user' ? '#D97706' : '#DC2626';
+  const items = window._store[type];
+  if (!items.length) { el.innerHTML = '<div style="font-size:12px;color:var(--dim);padding:10px 2px;">ยังไม่มี Link</div>'; return; }
+  el.innerHTML = items.map(item => linkItemHTML(item, color, stroke, type)).join('');
+}
+
+function linkItemHTML(item, color, stroke, type) {
+  return '<div class="link-item ' + color + '">' +
+    '<div class="link-icon-wrap ' + color + '"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="' + stroke + '" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div>' +
+    '<div class="link-item-body" onclick="window.open(\'' + escHtml(item.url) + '\',\'_blank\')" style="cursor:pointer;">' +
+    '<div class="link-item-name">' + escHtml(item.name) + '</div>' +
+    '<div class="link-item-desc">' + escHtml(item.desc||'') + '</div></div>' +
+    '<div class="link-item-actions">' +
+    '<button class="icon-btn edit-btn" onclick="openEditModal(\'' + type + '\',\'' + item.id + '\')" title="แก้ไข"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>' +
+    '<button class="icon-btn del-btn" onclick="openDelModal(\'' + type + '\',\'' + item.id + '\')" title="ลบ"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg></button>' +
+    '<svg class="link-item-arrow" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="' + stroke + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" onclick="window.open(\'' + escHtml(item.url) + '\',\'_blank\')" style="cursor:pointer;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>' +
+    '</div></div>';
+}
+
+function updateStats() {
+  document.getElementById('totalLinks').textContent = window._store.user.length + window._store.admin.length;
+}
+
+function toggleCard(id) {
+  const card = document.getElementById(id);
+  const isOpen = card.classList.contains('open');
+  document.querySelectorAll('.app-card').forEach(c => c.classList.remove('open'));
+  if (!isOpen) card.classList.add('open');
+}
+
+function openModal(id){ document.getElementById(id).classList.add('show'); }
+function closeModal(id){ document.getElementById(id).classList.remove('show'); }
+
+function setModalColor(type) {
+  const isAmber = type === 'user';
+  const stroke = isAmber ? '#D97706' : '#DC2626';
+  document.getElementById('modalIcon').className = 'modal-icon ' + (isAmber ? 'amber' : 'red');
+  document.getElementById('modalIcon').innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="' + stroke + '" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>';
+  document.getElementById('modalSub').textContent = isAmber ? 'User · Field Inspection' : 'Admin · Control Panel';
+  document.getElementById('saveBtn').className = 'modal-btn save ' + (isAmber ? 'amber' : 'red');
+  ['inputName','inputDesc','inputUrl'].forEach(id => {
+    document.getElementById(id).className = 'form-input ' + (isAmber ? 'amber' : 'red-focus');
+  });
+}
+
+function openAddModal(type) {
+  window._editMode = { active: false, type, id: null };
+  document.getElementById('modalTitle').textContent = 'เพิ่ม Link ใหม่';
+  setModalColor(type);
+  ['inputName','inputDesc','inputUrl'].forEach(id => document.getElementById(id).value = '');
+  openModal('addModal');
+  setTimeout(() => document.getElementById('inputName').focus(), 300);
+}
+
+function openEditModal(type, id) {
+  const item = window._store[type].find(i => i.id === id);
+  if (!item) return;
+  window._editMode = { active: true, type, id };
+  document.getElementById('modalTitle').textContent = 'แก้ไข Link';
+  setModalColor(type);
+  document.getElementById('inputName').value = item.name;
+  document.getElementById('inputDesc').value = item.desc || '';
+  document.getElementById('inputUrl').value = item.url;
+  closeModal('manageModal');
+  openModal('addModal');
+  setTimeout(() => document.getElementById('inputName').focus(), 300);
+}
+
+function openDelModal(type, id) {
+  const item = window._store[type].find(i => i.id === id);
+  if (!item) return;
+  window._deleteTarget = { type, id };
+  const el = document.getElementById('delModalName');
+  el.textContent = item.name;
+  el.className = 'del-modal-name' + (type === 'admin' ? ' red' : '');
+  openModal('delModal');
+}
+
+function openManageModal(){ openModal('manageModal'); }
+
+function saveLink() {
+  const name = document.getElementById('inputName').value.trim();
+  const desc = document.getElementById('inputDesc').value.trim();
+  const url = document.getElementById('inputUrl').value.trim();
+  if (!name) { showToast('กรุณากรอกชื่อ Link', true); return; }
+  if (!url || !url.startsWith('http')) { showToast('URL ต้องขึ้นต้นด้วย http://', true); return; }
+  const em = window._editMode;
+  window._saveToFirestore(em.type, { name, desc, url }, em.active ? em.id : null);
+}
+
+function confirmDelete() {
+  window._deleteFromFirestore(window._deleteTarget.type, window._deleteTarget.id);
+}
+
+function setSaving(on) {
+  const btn = document.getElementById('saveBtn');
+  btn.disabled = on;
+  document.getElementById('saveRing').className = 'saving-ring' + (on ? ' show' : '');
+  document.getElementById('saveBtnText').textContent = on ? 'กำลังบันทึก...' : 'บันทึก';
+}
+function setDeleting(on) {
+  const btn = document.getElementById('delConfirmBtn');
+  btn.disabled = on;
+  document.getElementById('delRing').className = 'saving-ring' + (on ? ' show' : '');
+  document.getElementById('delBtnText').textContent = on ? 'กำลังลบ...' : 'ลบ Link';
+}
+
+function showToast(msg, isError) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (isError ? ' error' : '');
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+document.querySelectorAll('.modal-overlay').forEach(o => {
+  o.addEventListener('click', e => { if(e.target === o) o.classList.remove('show'); });
+});
+['inputName','inputDesc','inputUrl'].forEach(id => {
+  document.getElementById(id).addEventListener('keydown', e => { if(e.key==='Enter') saveLink(); });
+});
+</script>
+</body>
+</html>
